@@ -1,13 +1,20 @@
 import chess
 import time
-from backend.ai.random_ai import RandomAI
-from backend.ai.material_ai import MaterialAI
-from backend.ai.minimax_ai import MinimaxAI
+from backend.ai.search.random_ai import RandomAI
+from backend.ai.search.material_ai import MaterialAI
+from backend.ai.search.minimax_ai import MinimaxAI
+from backend.ai.search.alphabeta_ai import AlphaBetaAI
+from backend.ai.search.nnue_alphabeta_ai import NNUEAlphaBetaAI
+
+from backend.ai.evaluation.material_eval import MaterialEvaluator
+from backend.ai.evaluation.neural_eval import NNUEEvaluator
+
+move_count = 1
 
 board = chess.Board()
-white_ai = MaterialAI()
-black_ai = MinimaxAI(depth=3)  # Adjust depth as needed
-move_count = 1
+white_ai = AlphaBetaAI(depth=3)   # depth = 4 is max, but too slow
+black_ai = NNUEAlphaBetaAI(depth=4)   # depth = 5 is max, but too slow
+
 
 while not board.is_game_over():
   if board.turn == chess.WHITE:
@@ -17,8 +24,6 @@ while not board.is_game_over():
     move = black_ai.select_move(board)
     board.push(move) if move else print("No legal moves available for Black.")
 
-
-  # 最小限の表示（前の手と簡易盤面）
   print(f"\n[{move_count}]")
   print(board)
   time.sleep(0.25)

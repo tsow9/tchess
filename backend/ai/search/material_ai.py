@@ -1,7 +1,9 @@
 import chess
 import random
 
-from backend.utils.evaluation import evaluate
+from backend.ai.evaluation.material_eval import MaterialEvaluator
+
+evaluate_board = MaterialEvaluator()
 
 
 class MaterialAI:
@@ -16,7 +18,7 @@ class MaterialAI:
     # Evaluate all legal moves
     for move in legal_moves:
       board.push(move)
-      score = evaluate(board)
+      score = evaluate_board(board)
       board.pop()
 
       # Update best move based on the score
