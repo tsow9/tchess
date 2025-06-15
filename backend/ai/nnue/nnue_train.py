@@ -12,12 +12,12 @@ from backend.ai.utils.save_latest_graphs import save_latest_graphs_from_logs
 
 # parameters
 BATCH_SIZE = 64
-EPOCHS = 60
+EPOCHS = 8
 LEARNING_RATE = 1e-4
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 # Dataset name to load
-DATASET = "20250613_1605_AlphaBetaAI_d=2_vs_AlphaBetaAI_d=3"
+DATASET = "combined_20250614_2232_AlphaBetaAI_d=2_vs_AlphaBetaAI_d=2"
 GRAPH_TITLE = "Training_Loss" + DATASET
 X_LABEL = "Epoch"
 Y_LABEL = "Loss"
@@ -26,7 +26,7 @@ Y_LABEL = "Loss"
 data = torch.load(os.path.join(local_paths.DATA_SELF_LEARNING_DATASET, f"{DATASET}.pt"))
 
 print("Converting data to tensors...")
-inputs = torch.stack([x[0] for x in data]).to(DEVICE)  # shape: (N, 768)
+inputs = torch.stack([x[0] for x in data]).to(DEVICE)
 targets = torch.tensor([x[1] for x in data], dtype=torch.float32).unsqueeze(1).to(DEVICE)  # shape: (N, 1)
 
 dataset = TensorDataset(inputs, targets)

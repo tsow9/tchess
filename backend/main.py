@@ -13,36 +13,39 @@ from .ai.utils.clone_counter import hook_clone_counter
 move_count = 1
 
 board = chess.Board()
-white_ai = AlphaBetaAI(depth=3)   # depth = 5 is max, but too slow
+white_ai = AlphaBetaAI(depth=2)   # depth = 5 is max, but too slow
 black_ai = NNUEAlphaBetaAI(depth=3)   # depth = 4 is max, but too slow
 
 start_time = time.perf_counter()
 clone_counter = hook_clone_counter()
 
 while not board.is_game_over():
-  if board.turn == chess.WHITE:
-    white_start_time = time.perf_counter()
+  turn = board.turn
+  turn_start = time.perf_counter()
 
-    move = white_ai.select_move(board)
-    board.push(move) if move else print("No legal moves available for White.")
-
-    white_end_time = time.perf_counter()
-    white_execution_time = white_end_time - white_start_time
-    print(f"White executed in: {white_execution_time: .4f} seconds")
+  if turn == chess.WHITE:
+    player = white_ai
   else:
-    black_start_time = time.perf_counter()
+    player = black_ai
 
-    move = black_ai.select_move(board)
-    board.push(move) if move else print("No legal moves available for Black.")
-
-    black_end_time = time.perf_counter()
-    black_execution_time = black_end_time - black_start_time
-    print(f"Black executed in: {black_execution_time: .4f} seconds")
+  move = player.select_move(board)
+  board.push(move) if move else print(f"No legal moves available for {'White' if turn == chess.WHITE else 'Black'}.")
 
   print(f"\n[{move_count}]")
   print(board)
-  time.sleep(0.25)
+
+  ## DEBUG ##
+  if turn == chess.BLACK:
+    black_ai.evaluator.log_stats()
+    black_ai.tt.log_stats()
+    print(move, black_ai.best_score)
+
+  turn_end = time.perf_counter()
+  turn_execution_time = turn_end - turn_start
+  print(f"{"White" if turn else "Black"} executed in: {turn_execution_time: .4f} seconds")
   move_count += 1
+
+  time.sleep(0.25)
 
 print("\nGame Over:", board.result())
 end_time = time.perf_counter()

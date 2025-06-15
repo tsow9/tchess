@@ -49,6 +49,8 @@ def apply_move_to_tensor(board: chess.Board, move: chess.Move, tensor: torch.Ten
   tensor[772] = 1 if board.has_queenside_castling_rights(chess.BLACK) else 0
 
   # 6. En passant square
-  tensor[773] = 1 if board.ep_square is not None else 0
+  if board.ep_square is not None:
+    ep_file = chess.square_file(board.ep_square)  # 0 = a, ..., 7 = h
+    tensor[773 + ep_file] = 1
 
   return tensor

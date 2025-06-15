@@ -5,8 +5,9 @@ def board_to_tensor(board: chess.Board) -> torch.Tensor:
   """
   Convert a chess.Board object to a tensor representation for neural evaluation.
   """
-
-  tensor = torch.zeros(64 * 6 * 2 + 6)   # 64 squares, 6 piece types (pawn, knight, bishop, rook, queen, king), 2 colors (white and black)
+  # 64 squares, 6 piece types (pawn, knight, bishop, rook, queen, king),
+  # 1 color (white and black), 4 castling rights, 8 en passtant files
+  tensor = torch.zeros(64 * 6 * 2 + 1 + 4 + 8)   
 
   # 1. Piece positions
   piece_map = board.piece_map()
@@ -26,6 +27,8 @@ def board_to_tensor(board: chess.Board) -> torch.Tensor:
   tensor[772] = 1 if board.has_queenside_castling_rights(chess.BLACK) else 0
 
   # 4. En passant square
-  tensor[773] = 1 if board.ep_square is not None else 0
+  if board.ep_square is not None:
+    ep_file = chess.square_file(board.ep_square)  # 0 = a, ..., 7 = h
+    tensor[773 + ep_file] = 1
 
   return tensor
